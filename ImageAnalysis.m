@@ -132,7 +132,10 @@ function pushbutton5_Callback(hObject, eventdata, handles)
 % hObject    handle to pushbutton5 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-
+h = imrect
+hparent = axes(handles.axes1)
+h = imrect(hparent)
+%we now need a way to save what is inside the rectangle, i think.
 
 % --- If Enable == 'on', executes on mouse press in 5 pixel border.
 % --- Otherwise, executes on mouse press in 5 pixel border or over importImage.
@@ -167,7 +170,9 @@ function zSlider_CreateFcn(hObject, eventdata, handles)
 if isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
     set(hObject,'BackgroundColor',[.9 .9 .9]);
 end
-
+%set(handlezSlider, 'min', 1);
+%set(handlezSlider, 'max', 7);
+%set(handlezSlider, 'Value', 1);
 
 % --- Executes on slider movement.
 function Contrast_Callback(hObject, eventdata, handles)
