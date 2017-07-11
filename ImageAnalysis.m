@@ -83,6 +83,8 @@ im_cell = bfopen;
 im = im_cell{1,1}{1,1};
 axes(handles.axes1);
 imshow(im,[])
+handles.im_cell = im_cell;
+guidata(hObject, handles)
 
 % --- Executes on slider movement.
 function contrast_Callback(hObject, eventdata, handles)
@@ -92,6 +94,7 @@ function contrast_Callback(hObject, eventdata, handles)
 
 % Hints: get(hObject,'Value') returns position of slider
 %        get(hObject,'Min') and get(hObject,'Max') to determine range of slider
+
 
 
 % --- Executes during object creation, after setting all properties.
@@ -132,10 +135,10 @@ function pushbutton5_Callback(hObject, eventdata, handles)
 % hObject    handle to pushbutton5 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-h = imrect
-hparent = axes(handles.axes1)
-h = imrect(hparent)
-%we now need a way to save what is inside the rectangle, i think.
+h = imrect;
+hparent = axes(handles.axes1);
+h = imrect(hparent);
+
 
 % --- If Enable == 'on', executes on mouse press in 5 pixel border.
 % --- Otherwise, executes on mouse press in 5 pixel border or over importImage.
@@ -148,7 +151,8 @@ im_cell = bfopen;
 im = im_cell{1,1}{1,1};
 axes(handles.axes1);
 imshow(im, []);
-
+handles.im_cell = im_cell;
+guidata(hObject, handles);
 
 % --- Executes on slider movement.
 function zSlider_Callback(hObject, eventdata, handles)
@@ -158,7 +162,17 @@ function zSlider_Callback(hObject, eventdata, handles)
 
 % Hints: get(hObject,'Value') returns position of slider
 %        get(hObject,'Min') and get(hObject,'Max') to determine range of slider
+%series1 = handles.im_cell{1,1};
+%planeCount = (size(series1, 1))/3;
 
+set(handles.zSlider, 'Min', 1);
+set(handles.zSlider, 'Max', 7);
+set(handles.zSlider, 'Value', 1);
+set(handles.zSlider, 'SliderStep', [1/7 , 1/7]);
+
+sliderVal = get(hObject, 'Value');
+assignin('base', 'sliderVal', sliderVal);
+set(handles.text5, 'String', num2str(sliderVal));
 
 % --- Executes during object creation, after setting all properties.
 function zSlider_CreateFcn(hObject, eventdata, handles)
@@ -170,9 +184,7 @@ function zSlider_CreateFcn(hObject, eventdata, handles)
 if isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
     set(hObject,'BackgroundColor',[.9 .9 .9]);
 end
-%set(handlezSlider, 'min', 1);
-%set(handlezSlider, 'max', 7);
-%set(handlezSlider, 'Value', 1);
+
 
 % --- Executes on slider movement.
 function Contrast_Callback(hObject, eventdata, handles)
@@ -182,7 +194,10 @@ function Contrast_Callback(hObject, eventdata, handles)
 
 % Hints: get(hObject,'Value') returns position of slider
 %        get(hObject,'Min') and get(hObject,'Max') to determine range of slider
-
+disp('adjusting contrast');
+im = handles.axes1;
+J = imadjust(im);
+imshow(J);
 
 % --- Executes during object creation, after setting all properties.
 function Contrast_CreateFcn(hObject, eventdata, handles)
