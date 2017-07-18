@@ -22,7 +22,7 @@ function varargout = ImageAnalysis(varargin)
 
 % Edit the above text to modify the response to help ImageAnalysis
 
-% Last Modified by GUIDE v2.5 03-Jul-2017 14:17:50
+% Last Modified by GUIDE v2.5 18-Jul-2017 12:54:35
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -83,76 +83,77 @@ im_cell = bfopen;
 im = im_cell{1,1}{1,1};
 axes(handles.axes1);
 imshow(im,[])
+
+set(handles.text5, 'String', get(handles.zSlider, 'Value'));
+set(handles.zSlider, 'Enable', 'on');
+
 handles.im_cell = im_cell;
 guidata(hObject, handles)
 
-% --- Executes on slider movement.
-function contrast_Callback(hObject, eventdata, handles)
-% hObject    handle to Contrast (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
 
-% Hints: get(hObject,'Value') returns position of slider
-%        get(hObject,'Min') and get(hObject,'Max') to determine range of slider
-
-
-
-% --- Executes during object creation, after setting all properties.
-function contrast_CreateFcn(hObject, eventdata, handles)
-% hObject    handle to Contrast (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    empty - handles not created until after all CreateFcns called
-
-% Hint: slider controls usually have a light gray background.
-if isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
-    set(hObject,'BackgroundColor',[.9 .9 .9]);
-end
-
-
-% --- Executes on button press in pushbutton2.
+% --- Executes on button press in trans.
 function trans_Callback(hObject, eventdata, handles)
-% hObject    handle to pushbutton2 (see GCBO)
+% hObject    handle to trans (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+% --- Executes on button press in trans.
+num = get(handles.zSlider, 'Value');
+im = handles.im_cell{1,1}{(1+((num-1)*3)),1};
+axes(handles.axes1);
+imshow(im, [])
+
+handles.first = 1;
+handles.second = 0;
+handles.third = 0;
+clc; 
+disp('Fist Button was pressed.');
+guidata(hObject, handles);
 
 
-% --- Executes on button press in pushbutton3.
-function rfp_Callback(hObject, eventdata, handles)
-% hObject    handle to pushbutton3 (see GCBO)
+% --- Executes on button press in RFP.
+function RFP_Callback(hObject, eventdata, handles)
+% hObject    handle to RFP (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+num = get(handles.zSlider, 'Value');
+im = handles.im_cell{1,1}{(2+(3*(num-1))),1};
+axes(handles.axes1);
+imshow(im, [])
 
+handles.first = 0;
+handles.second = 1;
+handles.third = 0;
+clc; 
+disp('Second Button was pressed.');
+guidata(hObject, handles);
 
-% --- Executes on button press in pushbutton4.
-function pushbutton4_Callback(hObject, eventdata, handles)
-% hObject    handle to pushbutton4 (see GCBO)
+% --- Executes on button press in GFP.
+function GFP_Callback(hObject, eventdata, handles)
+% hObject    handle to GFP (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+num = get(handles.zSlider, 'Value');
+im = handles.im_cell{1,1}{(3+(3*(num-1))),1};
+axes(handles.axes1);
+imshow(im, [])
+
+handles.first = 0;
+handles.second = 0;
+handles.third = 1;
+clc; 
+disp('Third Button was pressed.');
+guidata(hObject, handles);
 
 
-% --- Executes on button press in pushbutton5.
-function pushbutton5_Callback(hObject, eventdata, handles)
-% hObject    handle to pushbutton5 (see GCBO)
+% --- Executes on button press in box.
+function box_Callback(hObject, eventdata, handles)
+% hObject    handle to box (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 h = imrect;
 hparent = axes(handles.axes1);
 h = imrect(hparent);
 
-
-% --- If Enable == 'on', executes on mouse press in 5 pixel border.
-% --- Otherwise, executes on mouse press in 5 pixel border or over importImage.
-function importImage_ButtonDownFcn(hObject, eventdata, handles)
-% hObject    handle to importImage (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-disp('Opening Image with Bioformats');
-im_cell = bfopen;
-im = im_cell{1,1}{1,1};
-axes(handles.axes1);
-imshow(im, []);
-handles.im_cell = im_cell;
-guidata(hObject, handles);
 
 % --- Executes on slider movement.
 function zSlider_Callback(hObject, eventdata, handles)
@@ -162,17 +163,35 @@ function zSlider_Callback(hObject, eventdata, handles)
 
 % Hints: get(hObject,'Value') returns position of slider
 %        get(hObject,'Min') and get(hObject,'Max') to determine range of slider
-%series1 = handles.im_cell{1,1};
-%planeCount = (size(series1, 1))/3;
+
+seriesCount = size(handles.im_cell, 1);
+series1 = handles.im_cell{1,1};
+metadataList = handles.im_cell{1,2};
+planeCount = (size(series1, 1))/3;
 
 set(handles.zSlider, 'Min', 1);
-set(handles.zSlider, 'Max', 7);
-set(handles.zSlider, 'Value', 1);
-set(handles.zSlider, 'SliderStep', [1/7 , 1/7]);
+set(handles.zSlider, 'Max', planeCount);
+set(handles.zSlider, 'SliderStep', [(1/(planeCount-1)) , (1/(planeCount-1 ))]);
 
 sliderVal = get(hObject, 'Value');
 assignin('base', 'sliderVal', sliderVal);
 set(handles.text5, 'String', num2str(sliderVal));
+
+
+num = get(hObject, 'Value');
+if (handles.first==1 && handles.second==0 && handles.third==0)
+    im = handles.im_cell{1,1}{(1+((num-1)*3)),1};
+    axes(handles.axes1);
+    imshow(im, [])
+elseif (handles.first==0 && handles.second==1 && handles.third==0)
+    im = handles.im_cell{1,1}{(2+((num-1)*3)),1};
+    axes(handles.axes1);
+    imshow(im, [])
+elseif (handles.first==0 && handles.second==0 && handles.third==1)
+    im = handles.im_cell{1,1}{(3+((num-1)*3)),1};
+    axes(handles.axes1);
+    imshow(im, [])
+end
 
 % --- Executes during object creation, after setting all properties.
 function zSlider_CreateFcn(hObject, eventdata, handles)
@@ -185,7 +204,6 @@ if isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColo
     set(hObject,'BackgroundColor',[.9 .9 .9]);
 end
 
-
 % --- Executes on slider movement.
 function Contrast_Callback(hObject, eventdata, handles)
 % hObject    handle to Contrast (see GCBO)
@@ -195,9 +213,12 @@ function Contrast_Callback(hObject, eventdata, handles)
 % Hints: get(hObject,'Value') returns position of slider
 %        get(hObject,'Min') and get(hObject,'Max') to determine range of slider
 disp('adjusting contrast');
-im = handles.axes1;
+im = imread(handles.axes1);
 J = imadjust(im);
-imshow(J);
+axes(handles.axes1);
+imshow(J)
+%min=684
+%max= 1893
 
 % --- Executes during object creation, after setting all properties.
 function Contrast_CreateFcn(hObject, eventdata, handles)
@@ -212,8 +233,8 @@ end
 
 
 % --- Executes on slider movement.
-function slider5_Callback(hObject, eventdata, handles)
-% hObject    handle to slider5 (see GCBO)
+function time_Callback(hObject, eventdata, handles)
+% hObject    handle to time (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
@@ -222,8 +243,8 @@ function slider5_Callback(hObject, eventdata, handles)
 
 
 % --- Executes during object creation, after setting all properties.
-function slider5_CreateFcn(hObject, eventdata, handles)
-% hObject    handle to slider5 (see GCBO)
+function time_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to time (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    empty - handles not created until after all CreateFcns called
 
@@ -231,3 +252,7 @@ function slider5_CreateFcn(hObject, eventdata, handles)
 if isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
     set(hObject,'BackgroundColor',[.9 .9 .9]);
 end
+
+
+
+
