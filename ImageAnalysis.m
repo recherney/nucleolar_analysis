@@ -22,7 +22,7 @@ function varargout = ImageAnalysis(varargin)
 
 % Edit the above text to modify the response to help ImageAnalysis
 
-% Last Modified by GUIDE v2.5 18-Jul-2017 12:54:35
+% Last Modified by GUIDE v2.5 07-Aug-2017 10:46:42
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -84,10 +84,36 @@ im = im_cell{1,1}{1,1};
 axes(handles.axes1);
 imshow(im,[])
 
+
 set(handles.text5, 'String', get(handles.zSlider, 'Value'));
 set(handles.zSlider, 'Enable', 'on');
 
+xmin = min([im(:)]);
+xmax = max([im(:)]);
+set(handles.val, 'String', xmin);
+set(handles.contrastMin, 'Value', xmin);
+set(handles.contrastMin, 'Min', xmin);
+set(handles.contrastMin, 'Max', xmax);
+% set(handles.contrastMin, 'SliderStep', [ 5/(xmax-xmin) , 10/(xmax-xmin)]);
+% set(handles.contrastMin, 'SliderStep', [(1/(xmax - xmin)) , (1/(xmax - xmin))]);
+set(handles.text9, 'String', xmax);
+set(handles.contrastMax, 'Value', xmax);
+set(handles.contrastMax, 'Min', xmin);
+set(handles.contrastMax, 'Max', xmax);
+% set(handles.contrastMax, 'SliderStep', [10/(xmax - xmin) , 10/(xmax - xmin)]);
+
+% set(handles.contrastMax, 'SliderStep', [(1/(xmax-xmin)) , (1/(xmax - xmin))]);
+% set(handles.contrastMin, 'SliderStep', [(1/(xmax-xmin)) , (1/(xmax - xmin))]);
+
+
+handles.xmin = xmin;
+handles.xmax = xmax;
+handles.first = 0;
+handles.second = 0;
+handles.third = 0;
+
 handles.im_cell = im_cell;
+handles.im = im;
 guidata(hObject, handles)
 
 
@@ -100,32 +126,40 @@ function trans_Callback(hObject, eventdata, handles)
 num = get(handles.zSlider, 'Value');
 im = handles.im_cell{1,1}{(1+((num-1)*3)),1};
 axes(handles.axes1);
-imshow(im, [])
 
+if isfield(handles, 'pos')
+    imshow(im, []);
+%     colormap(handles.axes1, handles.im_cell{1,3}{1,(1+(3*(num-1)))});
+    h = imrect(handles.axes1, handles.pos);
+else 
+    imshow(im, []);
+%     colormap(handles.axes1, handles.im_cell{1,3}{1,(2+(3*(num-1)))});
+end
+
+xmin = min([im(:)]);
+xmax = max([im(:)]);
+set(handles.val, 'String', xmin);
+set(handles.contrastMin, 'Value', xmin);
+set(handles.contrastMin, 'Min', xmin);
+set(handles.contrastMin, 'Max', xmax);
+set(handles.text9, 'String', xmax);
+set(handles.contrastMax, 'Value', xmax);
+set(handles.contrastMax, 'Min', xmin);
+set(handles.contrastMax, 'Max', xmax);
+
+% set(handles.contrastMax, 'SliderStep', [(1/(xmax-xmin)) , (1/(xmax - xmin))]);
+% set(handles.contrastMin, 'SliderStep', [(1/(xmax-xmin)) , (1/(xmax - xmin))]);
+
+handles.xmin = xmin;
+handles.xmax = xmax;
 handles.first = 1;
 handles.second = 0;
 handles.third = 0;
-clc; 
+
 disp('Fist Button was pressed.');
 guidata(hObject, handles);
 
 
-% --- Executes on button press in RFP.
-function RFP_Callback(hObject, eventdata, handles)
-% hObject    handle to RFP (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-num = get(handles.zSlider, 'Value');
-im = handles.im_cell{1,1}{(2+(3*(num-1))),1};
-axes(handles.axes1);
-imshow(im, [])
-
-handles.first = 0;
-handles.second = 1;
-handles.third = 0;
-clc; 
-disp('Second Button was pressed.');
-guidata(hObject, handles);
 
 % --- Executes on button press in GFP.
 function GFP_Callback(hObject, eventdata, handles)
@@ -133,14 +167,89 @@ function GFP_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 num = get(handles.zSlider, 'Value');
-im = handles.im_cell{1,1}{(3+(3*(num-1))),1};
-axes(handles.axes1);
-imshow(im, [])
+im = handles.im_cell{1,1}{(2+(3*(num-1))),1};
+% imshow(im, []);
+% colormap(handles.axes1, handles.im_cell{1,3}{1,(2+(3*(num-1)))});
 
+% ise = evalin( 'base', 'exist("pos", "var")' )
+% pos = evalin('base', 'pos')
+
+    
+if isfield(handles, 'pos')
+    imshow(im, []);
+    colormap(handles.axes1, handles.im_cell{1,3}{1,(2+(3*(num-1)))});
+    h = imrect(handles.axes1, handles.pos);
+%     pos = getPosition(h)
+else 
+    imshow(im, []);
+    colormap(handles.axes1, handles.im_cell{1,3}{1,(2+(3*(num-1)))});
+end
+
+
+
+xmin = min([im(:)]);
+xmax = max([im(:)]);
+set(handles.val, 'String', xmin);
+set(handles.contrastMin, 'Value', xmin);
+set(handles.contrastMin, 'Min', xmin);
+set(handles.contrastMin, 'Max', xmax);
+set(handles.text9, 'String', xmax);
+set(handles.contrastMax, 'Value', xmax);
+set(handles.contrastMax, 'Min', xmin);
+set(handles.contrastMax, 'Max', xmax);
+
+
+% set(handles.contrastMax, 'SliderStep', [(1/(xmax-xmin)) , (1/(xmax - xmin))]);
+% set(handles.contrastMin, 'SliderStep', [(1/(xmax-xmin)) , (1/(xmax - xmin))]);
+
+handles.xmin = xmin;
+handles.xmax = xmax;
 handles.first = 0;
 handles.second = 0;
 handles.third = 1;
-clc; 
+
+disp('Second Button was pressed.');
+guidata(hObject, handles);
+
+% --- Executes on button press in RFP.
+function RFP_Callback(hObject, eventdata, handles)
+% hObject    handle to RFP (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+num = get(handles.zSlider, 'Value');
+im = handles.im_cell{1,1}{(3+(3*(num-1))),1};
+
+if isfield(handles, 'pos')
+    imshow(im, []);
+    colormap(handles.axes1, handles.im_cell{1,3}{1,(3+(3*(num-1)))});
+    h = imrect(handles.axes1, handles.pos);
+else 
+    imshow(im, []);
+    colormap(handles.axes1, handles.im_cell{1,3}{1,(3+(3*(num-1)))});
+end
+
+
+xmin = min([im(:)]);
+xmax = max([im(:)]);
+set(handles.val, 'String', xmin);
+set(handles.contrastMin, 'Value', xmin);
+set(handles.contrastMin, 'Min', xmin);
+set(handles.contrastMin, 'Max', xmax);
+set(handles.text9, 'String', xmax);
+set(handles.contrastMax, 'Value', xmax);
+set(handles.contrastMax, 'Min', xmin);
+set(handles.contrastMax, 'Max', xmax);
+
+% set(handles.contrastMax, 'SliderStep', [(1/(xmax-xmin)) , (1/(xmax - xmin))]);
+% set(handles.contrastMin, 'SliderStep', [(1/(xmax-xmin)) , (1/(xmax - xmin))]);
+
+handles.xmin = xmin;
+handles.xmax = xmax;
+handles.first = 0;
+handles.second = 1;
+handles.third = 0;
+
+
 disp('Third Button was pressed.');
 guidata(hObject, handles);
 
@@ -151,8 +260,18 @@ function box_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 h = imrect;
-hparent = axes(handles.axes1);
-h = imrect(hparent);
+% set(h, 'HitTest', 'off');
+% hparent = handles.axes1;
+% h = imrect(hparent);
+
+% set(gcf, 'WindowButtonDownFcn', 'disp("axis callback")')
+% set(gcf, 'WindowButtonDownFcn', 'disp(getPosition(handles.h))')
+% set(gca, 'ButtonDownFcn', 'disp("axis callback")')
+
+pos = getPosition(h)
+handles.pos = pos;
+handles.h = h;
+guidata(hObject, handles);
 
 
 % --- Executes on slider movement.
@@ -173,6 +292,7 @@ set(handles.zSlider, 'Min', 1);
 set(handles.zSlider, 'Max', planeCount);
 set(handles.zSlider, 'SliderStep', [(1/(planeCount-1)) , (1/(planeCount-1 ))]);
 
+
 sliderVal = get(hObject, 'Value');
 assignin('base', 'sliderVal', sliderVal);
 set(handles.text5, 'String', num2str(sliderVal));
@@ -183,46 +303,56 @@ if (handles.first==1 && handles.second==0 && handles.third==0)
     im = handles.im_cell{1,1}{(1+((num-1)*3)),1};
     axes(handles.axes1);
     imshow(im, [])
+    if isfield(handles, 'pos')
+        h = imrect(handles.axes1, handles.pos);
+    end
 elseif (handles.first==0 && handles.second==1 && handles.third==0)
-    im = handles.im_cell{1,1}{(2+((num-1)*3)),1};
-    axes(handles.axes1);
-    imshow(im, [])
-elseif (handles.first==0 && handles.second==0 && handles.third==1)
     im = handles.im_cell{1,1}{(3+((num-1)*3)),1};
+    imshow(im, [])
+    colormap(handles.axes1, handles.im_cell{1,3}{1,(3+(3*(num-1)))});
+    if isfield(handles, 'pos')
+        h = imrect(handles.axes1, handles.pos);
+    end
+elseif (handles.first==0 && handles.second==0 && handles.third==1)
+    im = handles.im_cell{1,1}{(2+((num-1)*3)),1};
+    imshow(im, []);
+    colormap(handles.axes1, handles.im_cell{1,3}{1,(2+(3*(num-1)))});
+    if isfield(handles, 'pos')
+        h = imrect(handles.axes1, handles.pos);
+    end
+elseif (handles.first==0 && handles.second==0 && handles.third==0)
+    im = handles.im_cell{1,1}{(1+((num-1)*3)),1};
     axes(handles.axes1);
     imshow(im, [])
+    if isfield(handles, 'pos')
+        h = imrect(handles.axes1, handles.pos);
+    end
 end
+
+xmin = min([im(:)]);
+xmax = max([im(:)]);
+set(handles.val, 'String', xmin);
+set(handles.contrastMin, 'Value', xmin);
+set(handles.contrastMin, 'Min', xmin);
+set(handles.contrastMin, 'Max', xmax);
+set(handles.text9, 'String', xmax);
+set(handles.contrastMax, 'Value', xmax);
+set(handles.contrastMax, 'Min', xmin);
+set(handles.contrastMax, 'Max', xmax);
+
+% set(handles.contrastMax, 'SliderStep', [(1/(xmax-xmin)) , (1/(xmax - xmin))]);
+% set(handles.contrastMin, 'SliderStep', [(1/(xmax-xmin)) , (1/(xmax - xmin))]);
+
+handles.im = im;
+handles.xmin = xmin;
+handles.xmax = xmax;
+
+guidata(hObject, handles);
+
 
 % --- Executes during object creation, after setting all properties.
 function zSlider_CreateFcn(hObject, eventdata, handles)
 % hObject    handle to zSlider (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    empty - handles not created until after all CreateFcns called
-
-% Hint: slider controls usually have a light gray background.
-if isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
-    set(hObject,'BackgroundColor',[.9 .9 .9]);
-end
-
-% --- Executes on slider movement.
-function Contrast_Callback(hObject, eventdata, handles)
-% hObject    handle to Contrast (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
-% Hints: get(hObject,'Value') returns position of slider
-%        get(hObject,'Min') and get(hObject,'Max') to determine range of slider
-disp('adjusting contrast');
-im = imread(handles.axes1);
-J = imadjust(im);
-axes(handles.axes1);
-imshow(J)
-%min=684
-%max= 1893
-
-% --- Executes during object creation, after setting all properties.
-function Contrast_CreateFcn(hObject, eventdata, handles)
-% hObject    handle to Contrast (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    empty - handles not created until after all CreateFcns called
 
@@ -254,5 +384,168 @@ if isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColo
 end
 
 
+% --- Executes on slider movement.
+function contrastMin_Callback(hObject, eventdata, handles)
+% hObject    handle to contrastMin (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
 
+% Hints: get(hObject,'Value') returns position of slider
+%        get(hObject,'Min') and get(hObject,'Max') to determine range of slider
+
+
+% set(handles.contrastMin, 'Min', xmin);
+% set(handles.contrastMin, 'Max', xmax);
+% set(hObject, 'SliderStep', [(1/(xmax-xmin)) , (1/(xmax-xmin))]);
+
+% xmin = min([handles.im(:)]);
+% xmax = max([handles.im(:)]);
+
+
+
+x = get(hObject, 'Value'); 
+y = get(handles.contrastMax, 'Value');
+if x > y
+    set(handles.contrastMax, 'Value', x);
+    set(handles.text9, 'String', x);
+    y = x;
+end
+
+sliderVal = get(hObject, 'Value');
+assignin('base', 'sliderVal', sliderVal);
+set(handles.val, 'String', num2str(sliderVal));
+
+num = get(handles.zSlider, 'Value');
+if (handles.first==1 && handles.second==0 && handles.third==0)
+    im = handles.im_cell{1,1}{(1+((num-1)*3)),1};
+    imshow(handles.im, [x, y]);
+    if isfield(handles, 'pos')
+        h = imrect(handles.axes1, handles.pos);
+    end
+elseif (handles.first==0 && handles.second==1 && handles.third==0)
+    im = handles.im_cell{1,1}{(3+((num-1)*3)),1};
+    imshow(im, [x,y])
+    colormap(handles.axes1, handles.im_cell{1,3}{1,(3+(3*(num-1)))});
+    if isfield(handles, 'pos')
+        h = imrect(handles.axes1, handles.pos);
+    end
+elseif (handles.first==0 && handles.second==0 && handles.third==1)
+    im = handles.im_cell{1,1}{(2+((num-1)*3)),1};
+    imshow(im, [x, y]);
+    colormap(handles.axes1, handles.im_cell{1,3}{1,(2+(3*(num-1)))});
+    if isfield(handles, 'pos')
+        h = imrect(handles.axes1, handles.pos);
+    end
+elseif (handles.first==0 && handles.second==0 && handles.third==0)
+    im = handles.im_cell{1,1}{(1+((num-1)*3)),1};
+    imshow(handles.im, [x, y]);
+    if isfield(handles, 'pos')
+        h = imrect(handles.axes1, handles.pos);
+    end
+end
+
+
+
+% --- Executes during object creation, after setting all properties.
+function contrastMin_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to contrastMin (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: slider controls usually have a light gray background.
+if isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor',[.9 .9 .9]);
+end
+
+
+
+% --- Executes on slider movement.
+function contrastMax_Callback(hObject, eventdata, handles)
+% hObject    handle to contrastMax (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'Value') returns position of slider
+%        get(hObject,'Min') and get(hObject,'Max') to determine range of slider
+
+
+% num = get(handles.zSlider, 'Value');
+% if (handles.first==1 && handles.second==0 && handles.third==0)
+%     im = handles.im_cell{1,1}{(1+((num-1)*3)),1};
+%     handles.im = im;
+% elseif (handles.first==0 && handles.second==1 && handles.third==0)
+%     im = handles.im_cell{1,1}{(2+((num-1)*3)),1};
+%     handles.im = im;
+% elseif (handles.first==0 && handles.second==0 && handles.third==1)
+%     im = handles.im_cell{1,1}{(3+((num-1)*3)),1};
+%     handles.im = im;
+% elseif (handles.first==0 && handles.second==0 && handles.third==0)
+%     im = handles.im_cell{1,1}{(1+((num-1)*3)),1};
+%     handles.im = im;
+% end
+
+% xmin = min([handles.im(:)]);
+% xmax = max([handles.im(:)]);
+
+x = get(handles.contrastMin, 'Value');
+y = get(hObject, 'Value'); 
+if y < x
+    set(handles.contrastMin, 'Value', y);
+    set(handles.val, 'String', y);
+    x = y;
+end
+
+sliderVal = get(hObject, 'Value');
+assignin('base', 'sliderVal', sliderVal);
+set(handles.text9, 'String', num2str(sliderVal));
+
+num = get(handles.zSlider, 'Value');
+if (handles.first==1 && handles.second==0 && handles.third==0)
+    im = handles.im_cell{1,1}{(1+((num-1)*3)),1};
+    imshow(handles.im, [x, y]);
+    if isfield(handles, 'pos')
+        h = imrect(handles.axes1, handles.pos);
+    end
+elseif (handles.first==0 && handles.second==1 && handles.third==0)
+    im = handles.im_cell{1,1}{(3+((num-1)*3)),1};
+    imshow(im, [x,y])
+    colormap(handles.axes1, handles.im_cell{1,3}{1,(3+(3*(num-1)))});
+    if isfield(handles, 'pos')
+        h = imrect(handles.axes1, handles.pos);
+    end
+elseif (handles.first==0 && handles.second==0 && handles.third==1)
+    im = handles.im_cell{1,1}{(2+((num-1)*3)),1};
+    imshow(im, [x, y]);
+    colormap(handles.axes1, handles.im_cell{1,3}{1,(2+(3*(num-1)))});
+    if isfield(handles, 'pos')
+        h = imrect(handles.axes1, handles.pos);
+    end
+elseif (handles.first==0 && handles.second==0 && handles.third==0)
+    im = handles.im_cell{1,1}{(1+((num-1)*3)),1};
+    imshow(handles.im, [x, y]);
+    if isfield(handles, 'pos')
+        h = imrect(handles.axes1, handles.pos);
+    end
+end
+
+
+% --- Executes during object creation, after setting all properties.
+function contrastMax_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to contrastMax (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: slider controls usually have a light gray background.
+if isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor',[.9 .9 .9]);
+end
+
+
+% --- Executes on mouse press over axes background.
+% function axes1_ButtonDownFcn(hObject, eventdata, handles)
+% hObject    handle to axes1 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+% 
+% pos = getPosition(handles.h)
 
